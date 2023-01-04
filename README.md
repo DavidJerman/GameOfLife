@@ -6,6 +6,7 @@ The game controls are:
 - C: Clear the grid
 - R: Randomize the grid
 - Left Click: Toggle cell state
+- Tab: Show/Hide Console
 
 For now, you can only randomize the grid with a 50% chance of a cell being alive.
 You cannot yet change the randomization chance or change cell states with the mouse.
@@ -27,8 +28,8 @@ If you need more information on how to build the project, you can check out the 
 ![Game of Life](https://davidblog.si/wp-content/uploads/2023/01/Peek-2023-01-04-16-26.gif)
 
 ## TODO
-- [ ] Add a way to change the randomization chance
-- [ ] Add a way to change cell states with the mouse
+- [x] Add a way to change the randomization chance
+- [x] Add a way to change cell states with the mouse
 - [ ] Add a way to change the grid size (currently set in constants.h)
 - [ ] Add a way to change the cell size (currently set in constants.h)
 - [ ] Add color customization

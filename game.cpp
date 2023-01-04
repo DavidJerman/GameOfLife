@@ -20,37 +20,58 @@ bool game::OnUserCreate() {
     // Seed the grid with random values
     for (auto &row: grid)
         for (auto &cell: row)
-            cell = rand() % 2;
+            if (rand() % 100 < randomizeChance * 100)
+                cell = true;
+    ConsoleCaptureStdOut(true);
     return true;
 }
 
 
 bool game::OnUserUpdate(float fElapsedTime) {
-    // If R is pressed, randomize the grid
-    if (GetKey(olc::Key::R).bPressed)
-        newState();
+    // called once per frame
+    if (!paused && !IsConsoleShowing()) {
+        // If R is pressed, randomize the grid
+        if (GetKey(olc::Key::R).bPressed)
+            newState();
 
-    // If C is pressed, clear the grid
-    if (GetKey(olc::Key::C).bPressed)
-        clearState();
+        // If C is pressed, clear the grid
+        if (GetKey(olc::Key::C).bPressed)
+            clearState();
+
+        // If mouse clicked
+        if (GetMouse(0).bHeld) {
+            // Get the mouse position
+            auto mousePos = GetMousePos();
+            // Get the cell position
+            next[mousePos.x][mousePos.y] = true;
+            updateBoard();
+            overwriteGrid();
+            // Skip the rest of the loop
+            return true;
+        }
+    }
 
     // If space is pressed, pause the simulation
-    if (GetKey(olc::Key::SPACE).bPressed)
-        pauseSimulation();
+    if (!IsConsoleShowing())
+        if (GetKey(olc::Key::SPACE).bPressed)
+            pauseSimulation();
+
+    // Show console
+    if (GetKey(olc::Key::TAB).bPressed)
+        ConsoleShow(olc::Key::TAB, false);
 
     // If paused, continue to the next frame
     if (paused)
         return true;
 
     // Tick
-    auto tickRes = calculateNewState();
+    calculateNewState();
 
     // Update the board
     updateBoard();
 
     // If calculateNewState, assign next to grid
-    if (tickRes)
-        overwriteGrid();
+    overwriteGrid();
 
     return true;
 }
@@ -71,10 +92,12 @@ void game::updateBoard() {
 
 void game::pauseSimulation() {
     paused = !paused;
-    if (paused)
+    if (paused) {
         DrawString(0, 0, "Paused", olc::BLUE, 1);
-    else {
+        std::cout << "Paused the simulation" << std::endl;
+    } else {
         Clear(olc::BLACK);
+        std::cout << "Resumed the simulation" << std::endl;
         // Draw the grid
         for (int x = 0; x < ROWS; x++)
             for (int y = 0; y < COLS; y++)
@@ -97,9 +120,11 @@ void game::clearState() {
 
 
 void game::newState() {
+    clearState();
     for (auto &row: grid)
         for (auto &cell: row)
-            cell = rand() % 2;
+            if (rand() % 100 < randomizeChance * 100)
+                cell = true;
 }
 
 
@@ -132,4 +157,56 @@ bool game::calculateNewState() {
         }
     }
     return true;
+}
+
+
+void game::setRandomizationChance(float chance) {
+    if (chance < 0 || chance > 100)
+        return;
+    randomizeChance = chance / 100;
+}
+
+bool game::OnConsoleCommand(const std::string &command) {
+    std::stringstream ss(command);
+    std::string cmd;
+    ss >> cmd;
+    if (cmd == "set") {
+        std::string var;
+        ss >> var;
+        if (var == "rand") {
+            float chance;
+            ss >> chance;
+            setRandomizationChance(chance);
+            std::cout << "Randomization chance set to " << getRandomizationChance() << std::endl;
+            return true;
+        }
+    }
+    if (cmd == "randomize" || cmd == "rand" || cmd == "r") {
+        newState();
+        std::cout << "Randomized the grid" << std::endl;
+        return true;
+    }
+    if (cmd == "clear" || cmd == "c") {
+        clearState();
+        std::cout << "Cleared the grid" << std::endl;
+        return true;
+    }
+    if (cmd == "pause" || cmd == "p") {
+        pauseSimulation();
+        return true;
+    }
+    if (cmd == "help" || cmd == "h") {
+        std::cout << "Available commands:" << std::endl;
+        std::cout << "set rand <chance>              > Sets the randomization chance (0-100)" << std::endl;
+        std::cout << "randomize | rand | r           > Randomizes the grid" << std::endl;
+        std::cout << "clear | c                      > Clears the grid" << std::endl;
+        std::cout << "pause | p                      > Pauses/resumes the simulation" << std::endl;
+        std::cout << "help | h                       > Shows this help message" << std::endl;
+        return true;
+    }
+    return false;
+}
+
+float game::getRandomizationChance() const {
+    return randomizeChance;
 }

@@ -12,17 +12,14 @@ class game : public olc::PixelGameEngine {
 public:
     game();
 
-public:
+private:
     bool OnUserCreate() override;
 
     bool OnUserUpdate(float fElapsedTime) override;
 
-    bool calculateNewState();
+    bool OnConsoleCommand(const std::string &command) override;
 
-private:
-    bool grid[ROWS][COLS]{};
-    bool next[ROWS][COLS]{};
-    bool paused = false;
+    bool calculateNewState();
 
     void newState();
 
@@ -33,6 +30,15 @@ private:
     void updateBoard();
 
     void overwriteGrid();
+
+    void setRandomizationChance(float chance);
+
+    float getRandomizationChance() const;
+
+    bool grid[ROWS][COLS]{};
+    bool next[ROWS][COLS]{};
+    bool paused = false;
+    float randomizeChance = 0.5f;
 };
 
 

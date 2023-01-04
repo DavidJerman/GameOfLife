@@ -7,7 +7,7 @@ The game controls are:
 - R: Randomize the grid
 - N: Next generation
 - Left Click: Toggle cell state
-- Tab: Show/Hide Console
+- Tab: Show/Hide Console (help or. h for help)
 
 For now, you can only randomize the grid with a 50% chance of a cell being alive.
 You cannot yet change the randomization chance or change cell states with the mouse.

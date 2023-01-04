@@ -39,6 +39,13 @@ private:
     bool next[ROWS][COLS]{};
     bool paused = false;
     float randomizeChance = 0.5f;
+    bool classicMode = true;
+public:
+    void setClassicMode(bool _classicMode);
+
+private:
+
+    bool addCells();
 };
 
 

@@ -40,14 +40,13 @@ bool game::OnUserUpdate(float fElapsedTime) {
 
         // If mouse clicked
         if (GetMouse(0).bHeld) {
-            // Get the mouse position
-            auto mousePos = GetMousePos();
-            // Get the cell position
-            next[mousePos.x][mousePos.y] = true;
+            return addCells();
+        }
+
+        if (GetKey(olc::Key::N).bPressed && !classicMode) {
+            calculateNewState();
             updateBoard();
             overwriteGrid();
-            // Skip the rest of the loop
-            return true;
         }
     }
 
@@ -65,14 +64,26 @@ bool game::OnUserUpdate(float fElapsedTime) {
         return true;
 
     // Tick
-    calculateNewState();
+    if (classicMode)
+        calculateNewState();
 
     // Update the board
     updateBoard();
 
     // If calculateNewState, assign next to grid
-    overwriteGrid();
+    if (classicMode)
+        overwriteGrid();
 
+    return true;
+}
+
+bool game::addCells() {// Get the mouse position
+    auto mousePos = GetMousePos();
+    // Get the cell position
+    next[mousePos.x][mousePos.y] = true;
+    updateBoard();
+    overwriteGrid();
+    // Skip the rest of the loop
     return true;
 }
 
@@ -180,6 +191,20 @@ bool game::OnConsoleCommand(const std::string &command) {
             std::cout << "Randomization chance set to " << getRandomizationChance() << std::endl;
             return true;
         }
+        if (var == "mode") {
+            std::string mode;
+            ss >> mode;
+            if (mode == "classic") {
+                setClassicMode(true);
+                std::cout << "Mode set to classic" << std::endl;
+                return true;
+            }
+            if (mode == "stepped") {
+                setClassicMode(false);
+                std::cout << "Mode set to to step by step" << std::endl;
+                return true;
+            }
+        }
     }
     if (cmd == "randomize" || cmd == "rand" || cmd == "r") {
         newState();
@@ -195,12 +220,20 @@ bool game::OnConsoleCommand(const std::string &command) {
         pauseSimulation();
         return true;
     }
+    if (cmd == "next" || cmd == "n") {
+        calculateNewState();
+        updateBoard();
+        overwriteGrid();
+        std::cout << "Calculated the next state" << std::endl;
+        return true;
+    }
     if (cmd == "help" || cmd == "h") {
         std::cout << "Available commands:" << std::endl;
         std::cout << "set rand <chance>              > Sets the randomization chance (0-100)" << std::endl;
         std::cout << "randomize | rand | r           > Randomizes the grid" << std::endl;
         std::cout << "clear | c                      > Clears the grid" << std::endl;
         std::cout << "pause | p                      > Pauses/resumes the simulation" << std::endl;
+        std::cout << "next | n                       > Next step/generation" << std::endl;
         std::cout << "help | h                       > Shows this help message" << std::endl;
         return true;
     }
@@ -209,4 +242,8 @@ bool game::OnConsoleCommand(const std::string &command) {
 
 float game::getRandomizationChance() const {
     return randomizeChance;
+}
+
+void game::setClassicMode(bool _classicMode) {
+    game::classicMode = _classicMode;
 }

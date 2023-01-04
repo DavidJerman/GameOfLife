@@ -5,6 +5,7 @@ The game controls are:
 - Space: Pause/Resume
 - C: Clear the grid
 - R: Randomize the grid
+- N: Next generation
 - Left Click: Toggle cell state
 - Tab: Show/Hide Console
 
@@ -33,4 +34,4 @@ If you need more information on how to build the project, you can check out the 
 - [ ] Add a way to change the grid size (currently set in constants.h)
 - [ ] Add a way to change the cell size (currently set in constants.h)
 - [ ] Add color customization
-- [ ] Make it so that individual steps can be taken instead of only pausing/resuming the game
+- [x] Make it so that individual steps can be taken instead of only pausing/resuming the game

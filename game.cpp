@@ -26,11 +26,11 @@ bool game::OnUserCreate() {
 
 
 bool game::OnUserUpdate(float fElapsedTime) {
-    // If n is pressed, randomize the grid
-    if (GetKey(olc::Key::N).bPressed)
+    // If R is pressed, randomize the grid
+    if (GetKey(olc::Key::R).bPressed)
         newState();
 
-    // If c is pressed, clear the grid
+    // If C is pressed, clear the grid
     if (GetKey(olc::Key::C).bPressed)
         clearState();
 

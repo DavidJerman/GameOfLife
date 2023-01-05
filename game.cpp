@@ -112,7 +112,7 @@ void game::updateBoard() {
     for (int x = 0; x < ScreenWidth(); x++)
         for (int y = 0; y < ScreenHeight(); y++)
             if (next[x][y] != grid[x][y])
-                Draw(x, y, next[x][y] ? olc::WHITE : olc::BLACK);
+                Draw(x, y, next[x][y] ? aliveCellColor : deadCellColor);
 }
 
 
@@ -122,13 +122,13 @@ void game::pauseSimulation() {
         DrawString(0, 0, "Paused", olc::BLUE, 1);
         std::cout << "Paused the simulation" << std::endl;
     } else {
-        Clear(olc::BLACK);
+        Clear(game::deadCellColor); // Is this necessary?
         std::cout << "Resumed the simulation" << std::endl;
         // Draw the grid
         for (int x = 0; x < ROWS; x++)
             for (int y = 0; y < COLS; y++)
                 if (next[x][y])
-                    Draw(x, y, next[x][y] ? olc::WHITE : olc::BLACK);
+                    Draw(x, y, next[x][y] ? aliveCellColor : deadCellColor);
     }
 }
 
@@ -141,7 +141,7 @@ void game::clearState() {
         for (auto &cell: row)
             cell = false;
     // Clear the screen
-    Clear(olc::BLACK);
+    Clear(game::deadCellColor);
 }
 
 
@@ -149,7 +149,7 @@ void game::newState() {
     clearState();
     for (auto &row: grid)
         for (auto &cell: row)
-            if (dist->operator()(rng) < (unsigned long)(randomizeChance * 100))
+            if (dist->operator()(rng) < (unsigned long) (randomizeChance * 100))
                 cell = true;
 }
 
@@ -221,7 +221,7 @@ void game::setBorders(bool _borders) {
     game::border = _borders;
 }
 
-void game::loadConfig(const std::string& configPath) {
+void game::loadConfig(const std::string &configPath) {
     std::fstream file(configPath);
     if (!file.is_open()) {
         std::cout << "Failed to open config file" << std::endl;
@@ -280,6 +280,63 @@ bool game::parseCommand(const std::string &command) {
                 return true;
             }
         }
+        if (var == "cell") {
+            std::string cellType;
+            ss >> cellType;
+            bool alive;
+            if (cellType == "alive") {
+                alive = true;
+            } else if (cellType == "dead") {
+                alive = false;
+            } else {
+                std::cout << "Invalid cell type" << std::endl;
+                return false;
+            }
+            std::string color;
+            ss >> color;
+            if (color == "red") {
+                if (alive)
+                    aliveCellColor = olc::RED;
+                else
+                    deadCellColor = olc::RED;
+                std::cout << "Cell color set to red" << std::endl;
+            } else if (color == "green") {
+                if (alive)
+                    aliveCellColor = olc::GREEN;
+                else
+                    deadCellColor = olc::GREEN;
+                std::cout << "Cell color set to green" << std::endl;
+            } else if (color == "blue") {
+                if (alive)
+                    aliveCellColor = olc::BLUE;
+                else
+                    deadCellColor = olc::BLUE;
+                std::cout << "Cell color set to blue" << std::endl;
+            } else if (color == "yellow") {
+                if (alive)
+                    aliveCellColor = olc::YELLOW;
+                else
+                    deadCellColor = olc::YELLOW;
+                std::cout << "Cell color set to yellow" << std::endl;
+            } else if (color == "white") {
+                if (alive)
+                    aliveCellColor = olc::WHITE;
+                else
+                    deadCellColor = olc::WHITE;
+                std::cout << "Cell color set to white" << std::endl;
+            } else if (color == "black") {
+                if (alive)
+                    aliveCellColor = olc::BLACK;
+                else
+                    deadCellColor = olc::BLACK;
+                std::cout << "Cell color set to black" << std::endl;
+            } else {
+                std::cout << "Invalid color" << std::endl;
+                return false;
+            }
+            fullUpdateBoard();
+            return true;
+        }
     }
     if (cmd == "randomize" || cmd == "rand" || cmd == "r") {
         newState();
@@ -313,4 +370,12 @@ bool game::parseCommand(const std::string &command) {
         return true;
     }
     return false;
+}
+
+void game::fullUpdateBoard() {
+    for (int x = 0; x < ScreenWidth(); x++) {
+        for (int y = 0; y < ScreenHeight(); y++) {
+            Draw(x, y, next[x][y] ? aliveCellColor : deadCellColor);
+        }
+    }
 }

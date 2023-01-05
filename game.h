@@ -34,6 +34,8 @@ private:
 
     void updateBoard();
 
+    void fullUpdateBoard();
+
     void overwriteGrid();
 
     void setRandomizationChance(float chance);
@@ -59,6 +61,10 @@ private:
     std::random_device rd;
     std::mt19937 rng;
     std::shared_ptr<std::uniform_int_distribution<std::mt19937::result_type>> dist;
+
+    // Colors
+    olc::Pixel deadCellColor = olc::BLACK;
+    olc::Pixel aliveCellColor = olc::WHITE;
 };
 
 

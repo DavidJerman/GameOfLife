@@ -13,8 +13,18 @@ set(HEADER_FILES
         game.h
         constants.h)
 
-# Set linker libraries
-set(LINKER_LIBRARIES
+# Set linker libraries for Windows
+set(LINKER_LIBRARIES_WINDOWS
+        user32
+        gdi32
+        opengl32
+        gdiplus
+        Shlwapi
+        dwmapi
+        stdc++fs)
+
+# Set linker libraries for Linux
+set(LINKER_LIBRARIES_LINUX
         X11
         GL
         pthread
@@ -23,7 +33,12 @@ set(LINKER_LIBRARIES
 
 # Add config.cfg to the build directory
 configure_file(config.cfg config.cfg COPYONLY)
-# Add to executable
-add_executable(GameOfLife ${SOURCE_FILES} ${HEADER_FILES})
-# Link libraries
-target_link_libraries(GameOfLife ${LINKER_LIBRARIES})
+
+# Add to executable for Windows and Linux
+if(WIN32)
+    add_executable(GameOfLife ${SOURCE_FILES} ${HEADER_FILES})
+    target_link_libraries(GameOfLife ${LINKER_LIBRARIES_WINDOWS})
+elseif(UNIX)
+    add_executable(GameOfLife ${SOURCE_FILES} ${HEADER_FILES})
+    target_link_libraries(GameOfLife ${LINKER_LIBRARIES_LINUX})
+endif()

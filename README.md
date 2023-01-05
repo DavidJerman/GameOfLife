@@ -54,5 +54,8 @@ For more information on how to build the project, you can check out the [olcPixe
 - [x] Add a way to change cell states with the mouse
 - ~~[ ] Add a way to change the grid size (currently set in constants.h)~~
 - ~~[ ] Add a way to change the cell size (currently set in constants.h)~~
-- [ ] Add color customization
+- [x] Add color customization
 - [x] Make it so that individual steps can be taken instead of only pausing/resuming the game
+- [ ] Add different algorithms for calculating the next generation
+- [ ] Add a way to save/load the grid
+- [ ] Add a way to change the speed of the simulation

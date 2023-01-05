@@ -13,45 +13,58 @@ class game : public olc::PixelGameEngine {
 public:
     game();
 
-    void setBorders(bool _borders);
-
-    void setClassicMode(bool _classicMode);
-
 private:
+    // Inherited via PixelGameEngine
+    bool OnConsoleCommand(const std::string &command) override;
+
     bool OnUserCreate() override;
 
     bool OnUserUpdate(float fElapsedTime) override;
 
-    bool OnConsoleCommand(const std::string &command) override;
+    // Game logic
+    bool addCells();
 
     bool calculateNewState();
 
     void newState();
 
-    void clearState();
-
     void pauseSimulation(bool mute);
-
-    void updateBoard();
-
-    void fullUpdateBoard();
-
-    void copyTemp();
-
-    void saveOldState();
-
-    void setRandomizationChance(float chance);
-
-    float getRandomizationChance() const;
-
-    bool addCells();
 
     bool removeCells();
 
-    void loadConfig(const std::string& configPath);
+    // Utility
+    void copyTemp();
+
+    float getRandomizationChance() const;
 
     bool parseCommand(const std::string &command);
 
+    void saveOldState();
+
+    void setBorders(bool _borders);
+
+    void setClassicMode(bool _classicMode);
+
+    void setRandomizationChance(float chance);
+
+    // I/O
+    void loadConfig(const std::string& configPath);
+
+    void saveState(const std::string& path);
+
+    void loadState(const std::string& path);
+
+    // Drawing
+    void clearState();
+
+    void fullUpdateBoard();
+
+    void updateBoard();
+
+    // I/O
+    bool ioWorking = false;
+
+    // Game state
     bool grid[ROWS][COLS]{};
     bool temp[ROWS][COLS]{};
     bool prev[ROWS][COLS]{};

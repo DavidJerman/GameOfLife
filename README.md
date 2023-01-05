@@ -31,6 +31,8 @@ You can also define custom rules for generating the next generation. See the tab
 | set border \<bool>              | Set the border to either true or false    |         |
 | set cell \<alive/dead> \<color> | Set the color of the cell                 |         |
 | set algo \<algorithm>           | Set the algorithm to use                  |         |
+| save \<filename>                | Save the current state                    | s       |
+| load \<filename>                | Load a state                              | l       |
 
 #### Algorithms
 Custom algorithms follow the following format:
@@ -72,5 +74,5 @@ For more information on how to build the project, you can check out the [olcPixe
 - [x] Add color customization
 - [x] Make it so that individual steps can be taken instead of only pausing/resuming the game
 - [x] Add different algorithms for calculating the next generation
-- [ ] Add a way to save/load the grid
 - [ ] Add a way to change the speed of the simulation
+- [ ] Save/load the game state

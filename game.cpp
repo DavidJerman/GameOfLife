@@ -6,7 +6,13 @@
 
 game::game() {
     sAppName = "Game Of Life";
+}
 
+
+// <-- Inherited via PixelGameEngine -->
+
+bool game::OnConsoleCommand(const std::string &command) {
+    return parseCommand(command);
 }
 
 
@@ -79,6 +85,8 @@ bool game::OnUserUpdate(float fElapsedTime) {
 }
 
 
+// <-- Game logic -->
+
 bool game::addCells() {// Get the mouse position
     auto mousePos = GetMousePos();
     // Get the cell position
@@ -87,67 +95,6 @@ bool game::addCells() {// Get the mouse position
     updateBoard();
     // Skip the rest of the loop
     return true;
-}
-
-
-bool game::removeCells() {
-    auto mousePos = GetMousePos();
-    // Get the cell position
-    saveOldState();
-    grid[mousePos.x][mousePos.y] = false;
-    updateBoard();
-    // Skip the rest of the loop
-    return true;
-}
-
-
-void game::copyTemp() {
-    std::memcpy(grid, temp, sizeof(grid));
-}
-
-
-void game::updateBoard() {
-    for (int x = 0; x < ScreenWidth(); x++)
-        for (int y = 0; y < ScreenHeight(); y++)
-            if (prev[x][y] != grid[x][y])
-                Draw(x, y, grid[x][y] ? aliveCellColor : deadCellColor);
-}
-
-
-void game::pauseSimulation(bool mute) {
-    paused = !paused;
-    if (paused) {
-        DrawString(0, 0, "Paused", olc::BLUE, 1);
-        if (!mute)
-            std::cout << "Paused the simulation" << std::endl;
-    } else {
-        Clear(game::deadCellColor); // Is this necessary?
-        if (!mute)
-            std::cout << "Resumed the simulation" << std::endl;
-        // Draw the grid
-        for (int x = 0; x < ROWS; x++)
-            for (int y = 0; y < COLS; y++)
-                if (grid[x][y])
-                    Draw(x, y, grid[x][y] ? aliveCellColor : deadCellColor);
-    }
-}
-
-
-void game::clearState() {
-    std::memset(grid, false, sizeof(grid));
-    std::memset(temp, false, sizeof(temp));
-    std::memset(prev, false, sizeof(prev));
-    // Clear the screen
-    Clear(game::deadCellColor);
-}
-
-
-void game::newState() {
-    clearState();
-    for (auto &row: grid)
-        for (auto &cell: row)
-            if (dist->operator()(rng) < (unsigned long) (randomizeChance * 100))
-                cell = true;
 }
 
 
@@ -200,44 +147,56 @@ bool game::calculateNewState() {
 }
 
 
-void game::setRandomizationChance(float chance) {
-    if (chance < 0 || chance > 100)
-        return;
-    randomizeChance = chance / 100;
+void game::newState() {
+    clearState();
+    for (auto &row: grid)
+        for (auto &cell: row)
+            if (dist->operator()(rng) < (unsigned long) (randomizeChance * 100))
+                cell = true;
 }
 
-bool game::OnConsoleCommand(const std::string &command) {
-    return parseCommand(command);
+
+void game::pauseSimulation(bool mute) {
+    paused = !paused;
+    if (paused) {
+        DrawString(0, 0, "Paused", olc::BLUE, 1);
+        if (!mute)
+            std::cout << "Paused the simulation" << std::endl;
+    } else {
+        Clear(game::deadCellColor); // Is this necessary?
+        if (!mute)
+            std::cout << "Resumed the simulation" << std::endl;
+        // Draw the grid
+        for (int x = 0; x < ROWS; x++)
+            for (int y = 0; y < COLS; y++)
+                if (grid[x][y])
+                    Draw(x, y, grid[x][y] ? aliveCellColor : deadCellColor);
+    }
 }
+
+
+bool game::removeCells() {
+    auto mousePos = GetMousePos();
+    // Get the cell position
+    saveOldState();
+    grid[mousePos.x][mousePos.y] = false;
+    updateBoard();
+    // Skip the rest of the loop
+    return true;
+}
+
+
+// <-- Utility -->
+
+void game::copyTemp() {
+    std::memcpy(grid, temp, sizeof(grid));
+}
+
 
 float game::getRandomizationChance() const {
     return randomizeChance;
 }
 
-void game::setClassicMode(bool _classicMode) {
-    game::classicMode = _classicMode;
-}
-
-void game::setBorders(bool _borders) {
-    game::border = _borders;
-}
-
-void game::loadConfig(const std::string &configPath) {
-    std::fstream file(configPath);
-    if (!file.is_open()) {
-        std::cout << "Failed to open config file" << std::endl;
-        return;
-    }
-    std::string line;
-    while (std::getline(file, line)) {
-        if (line.empty())
-            continue;
-        if (line[0] == '#')
-            continue;
-        parseCommand(line);
-    }
-    std::cout << "Loaded config file" << std::endl;
-}
 
 bool game::parseCommand(const std::string &command) {
     std::stringstream ss(command);
@@ -252,8 +211,7 @@ bool game::parseCommand(const std::string &command) {
             setRandomizationChance(chance);
             std::cout << "Randomization chance set to " << getRandomizationChance() << std::endl;
             return true;
-        }
-        else if (var == "mode") {
+        } else if (var == "mode") {
             std::string mode;
             ss >> mode;
             if (mode == "classic") {
@@ -266,8 +224,7 @@ bool game::parseCommand(const std::string &command) {
                 std::cout << "Mode set to to step by step" << std::endl;
                 return true;
             }
-        }
-        else if (var == "border") {
+        } else if (var == "border") {
             std::string borderState;
             ss >> borderState;
             if (borderState == "true") {
@@ -280,8 +237,7 @@ bool game::parseCommand(const std::string &command) {
                 std::cout << "Borders set to off" << std::endl;
                 return true;
             }
-        }
-        else if (var == "cell") {
+        } else if (var == "cell") {
             std::string cellType;
             ss >> cellType;
             bool alive;
@@ -337,8 +293,7 @@ bool game::parseCommand(const std::string &command) {
             }
             fullUpdateBoard();
             return true;
-        }
-        else if (var == "algo") {
+        } else if (var == "algo") {
             std::string algo;
             ss >> algo;
             if (!paused) {
@@ -374,6 +329,28 @@ bool game::parseCommand(const std::string &command) {
         std::cout << "Calculated the temp state" << std::endl;
         return true;
     }
+    if (cmd == "save" || cmd == "s") {
+        std::string path;
+        ss >> path;
+        if (!paused) {
+            std::cout << "Cannot save while game is running" << std::endl;
+            return false;
+        }
+        saveState(path);
+        std::cout << "Saved the state to " << path << std::endl;
+        return true;
+    }
+    if (cmd == "load" || cmd == "l") {
+        std::string path;
+        ss >> path;
+        if (!paused) {
+            std::cout << "Cannot load state while game is running" << std::endl;
+            return false;
+        }
+        loadState(path);
+        std::cout << "Loaded the state from " << path << std::endl;
+        return true;
+    }
     if (cmd == "help" || cmd == "h") {
         std::cout << "Available commands:" << std::endl;
         std::cout << "set rand <chance>              > Sets the randomization chance (0-100)" << std::endl;
@@ -387,6 +364,108 @@ bool game::parseCommand(const std::string &command) {
     return false;
 }
 
+
+void game::saveOldState() {
+    std::memcpy(prev, grid, sizeof(grid));
+}
+
+
+void game::setBorders(bool _borders) {
+    game::border = _borders;
+}
+
+
+void game::setClassicMode(bool _classicMode) {
+    game::classicMode = _classicMode;
+}
+
+
+void game::setRandomizationChance(float chance) {
+    if (chance < 0 || chance > 100)
+        return;
+    randomizeChance = chance / 100;
+}
+
+
+// <-- I/O functions -->
+
+void game::loadConfig(const std::string &configPath) {
+    std::fstream file(configPath);
+    if (!file.is_open()) {
+        std::cout << "Failed to open config file" << std::endl;
+        return;
+    }
+    std::string line;
+    while (std::getline(file, line)) {
+        if (line.empty())
+            continue;
+        if (line[0] == '#')
+            continue;
+        parseCommand(line);
+    }
+    std::cout << "Loaded config file" << std::endl;
+}
+
+
+void game::saveState(const std::string &path) {
+    std::ofstream file(path);
+    if (!file.is_open()) {
+        std::cout << "Failed to open file" << std::endl;
+        return;
+    }
+    ioWorking = true; // TODO: Use mutexes
+    for (int y = 0; y < ScreenHeight(); y++) {
+        for (int x = 0; x < ScreenWidth(); x++) {
+            file << (grid[x][y] ? '1' : '0');
+        }
+        for (int x = 0; x < ScreenWidth(); x++) {
+            file << (temp[x][y] ? '1' : '0');
+        }
+        for (int x = 0; x < ScreenWidth(); x++) {
+            file << (prev[x][y] ? '1' : '0');
+        }
+        file << std::endl;
+    }
+    // TODO: Store state variables
+    ioWorking = false;
+}
+
+
+void game::loadState(const std::string &path) {
+    std::ifstream file(path);
+    if (!file.is_open()) {
+        std::cout << "Failed to open file" << std::endl;
+        return;
+    }
+    ioWorking = true;
+    std::string line;
+    int y = 0;
+    while (std::getline(file, line)) {
+        for (int x = 0; x < ScreenWidth(); x++) {
+            grid[x][y] = line[x] == '1';
+            temp[x][y] = line[x + ScreenWidth()] == '1';
+            prev[x][y] = line[x + ScreenWidth() * 2] == '1';
+        }
+        y++;
+        if (y == ScreenHeight()) {
+            break;
+        }
+    }
+    ioWorking = false;
+}
+
+
+// <-- Drawing functions -->
+
+void game::clearState() {
+    std::memset(grid, false, sizeof(grid));
+    std::memset(temp, false, sizeof(temp));
+    std::memset(prev, false, sizeof(prev));
+    // Clear the screen
+    Clear(game::deadCellColor);
+}
+
+
 void game::fullUpdateBoard() {
     for (int x = 0; x < ScreenWidth(); x++) {
         for (int y = 0; y < ScreenHeight(); y++) {
@@ -395,9 +474,16 @@ void game::fullUpdateBoard() {
     }
 }
 
-void game::saveOldState() {
-    std::memcpy(prev, grid, sizeof(grid));
+
+void game::updateBoard() {
+    for (int x = 0; x < ScreenWidth(); x++)
+        for (int y = 0; y < ScreenHeight(); y++)
+            if (prev[x][y] != grid[x][y])
+                Draw(x, y, grid[x][y] ? aliveCellColor : deadCellColor);
 }
+
+
+// <-- Algorithm functions -->
 
 bool game::parseAlgo(const std::string &algorithm) {
     std::memset(birth, false, sizeof(birth));
@@ -417,7 +503,7 @@ bool game::parseAlgo(const std::string &algorithm) {
             birth[algorithm[i] - '0'] = true;
         }
     }
-    for (auto i = algorithm.length() - 1; ; i--) {
+    for (auto i = algorithm.length() - 1;; i--) {
         if (algorithm[i] == '/') {
             break;
         }

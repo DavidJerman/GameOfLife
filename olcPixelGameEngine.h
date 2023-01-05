@@ -2472,7 +2472,7 @@ namespace olc
 
 		e2 = (int)(dx2 >> 1);
 		// Flat top, just process the second half
-		if (y1 == y2) goto next;
+		if (y1 == y2) goto temp;
 		e1 = (int)(dx1 >> 1);
 
 		for (int i = 0; i < dx1;) {
@@ -2518,7 +2518,7 @@ namespace olc
 			y += 1;
 			if (y == y2) break;
 		}
-	next:
+	temp:
 		// Second half
 		dx1 = (int)(x3 - x2); if (dx1 < 0) { dx1 = -dx1; signx1 = -1; }
 		else signx1 = 1;

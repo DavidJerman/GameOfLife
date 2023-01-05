@@ -10,7 +10,7 @@ The game controls are:
 - Right Click: Remove a living cell
 - Tab: Show/Hide Console (help or. h for help)
 
-The game allows you to set the mode to either classic (where the simulation runs normally) or to stepped (where you have to press N to go to the next generation). 
+The game allows you to set the mode to either classic (where the simulation runs normally) or to stepped (where you have to press N to go to the temp generation). 
 You can add cells to the grid by clicking on them. Right click will remove the cells.
 You can also randomize the grid by pressing R or. You can clear the grid by pressing C. 
 You can pause the simulation by pressing Space. You can show/hide the console by pressing Tab. 
@@ -22,7 +22,7 @@ You can also press h or help to show the help in the console.
 | help               | Show help                                 | h       |
 | clear              | Clear the grid                            | c       |
 | randomize          | Randomize the grid                        | r, rand |
-| next               | Go to the next generation                 | n       |
+| temp               | Go to the temp generation                 | n       |
 | pause              | Pause the simulation                      | p       |
 | set mode \<mode>   | Set the mode to either classic or stepped |         |
 | set rand \<value>  | Set the randomization value (1-100)       |         |

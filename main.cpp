@@ -4,7 +4,7 @@
 int main()
 {
     game demo;
-    if (demo.Construct(SCREEN_WIDTH, SCREEN_HEIGHT, PIXEL_WIDTH, PIXEL_HEIGHT, false, true))
+    if (demo.Construct(SCREEN_WIDTH, SCREEN_HEIGHT, PIXEL_WIDTH, PIXEL_HEIGHT, false, false))
         demo.Start();
 
     return 0;

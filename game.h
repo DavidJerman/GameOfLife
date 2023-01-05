@@ -36,7 +36,9 @@ private:
 
     void fullUpdateBoard();
 
-    void overwriteGrid();
+    void copyTemp();
+
+    void saveOldState();
 
     void setRandomizationChance(float chance);
 
@@ -51,7 +53,8 @@ private:
     bool parseCommand(const std::string &command);
 
     bool grid[ROWS][COLS]{};
-    bool next[ROWS][COLS]{};
+    bool temp[ROWS][COLS]{};
+    bool prev[ROWS][COLS]{};
     bool paused = false;
     float randomizeChance = 0.5f;
     bool classicMode = true;

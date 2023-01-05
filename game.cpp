@@ -49,7 +49,6 @@ bool game::OnUserUpdate(float fElapsedTime) {
         if (GetKey(olc::Key::N).bPressed && !classicMode) {
             calculateNewState();
             updateBoard();
-            overwriteGrid();
         }
     }
 
@@ -62,7 +61,7 @@ bool game::OnUserUpdate(float fElapsedTime) {
     if (GetKey(olc::Key::TAB).bPressed)
         ConsoleShow(olc::Key::TAB, false);
 
-    // If paused, continue to the next frame
+    // If paused, continue to the temp frame
     if (paused)
         return true;
 
@@ -73,10 +72,6 @@ bool game::OnUserUpdate(float fElapsedTime) {
     // Update the board
     updateBoard();
 
-    // If calculateNewState, assign next to grid
-    if (classicMode)
-        overwriteGrid();
-
     return true;
 }
 
@@ -84,9 +79,9 @@ bool game::OnUserUpdate(float fElapsedTime) {
 bool game::addCells() {// Get the mouse position
     auto mousePos = GetMousePos();
     // Get the cell position
-    next[mousePos.x][mousePos.y] = true;
+    saveOldState();
+    grid[mousePos.x][mousePos.y] = true;
     updateBoard();
-    overwriteGrid();
     // Skip the rest of the loop
     return true;
 }
@@ -95,24 +90,24 @@ bool game::addCells() {// Get the mouse position
 bool game::removeCells() {
     auto mousePos = GetMousePos();
     // Get the cell position
-    next[mousePos.x][mousePos.y] = false;
+    saveOldState();
+    grid[mousePos.x][mousePos.y] = false;
     updateBoard();
-    overwriteGrid();
     // Skip the rest of the loop
     return true;
 }
 
 
-void game::overwriteGrid() {
-    std::memcpy(grid, next, sizeof(grid));
+void game::copyTemp() {
+    std::memcpy(grid, temp, sizeof(grid));
 }
 
 
 void game::updateBoard() {
     for (int x = 0; x < ScreenWidth(); x++)
         for (int y = 0; y < ScreenHeight(); y++)
-            if (next[x][y] != grid[x][y])
-                Draw(x, y, next[x][y] ? aliveCellColor : deadCellColor);
+            if (prev[x][y] != grid[x][y])
+                Draw(x, y, grid[x][y] ? aliveCellColor : deadCellColor);
 }
 
 
@@ -127,19 +122,16 @@ void game::pauseSimulation() {
         // Draw the grid
         for (int x = 0; x < ROWS; x++)
             for (int y = 0; y < COLS; y++)
-                if (next[x][y])
-                    Draw(x, y, next[x][y] ? aliveCellColor : deadCellColor);
+                if (grid[x][y])
+                    Draw(x, y, grid[x][y] ? aliveCellColor : deadCellColor);
     }
 }
 
 
 void game::clearState() {
-    for (auto &row: grid)
-        for (auto &cell: row)
-            cell = false;
-    for (auto &row: next)
-        for (auto &cell: row)
-            cell = false;
+    std::memset(grid, false, sizeof(grid));
+    std::memset(temp, false, sizeof(temp));
+    std::memset(prev, false, sizeof(prev));
     // Clear the screen
     Clear(game::deadCellColor);
 }
@@ -155,7 +147,8 @@ void game::newState() {
 
 
 bool game::calculateNewState() {
-    // Calculate the next board - V1
+    saveOldState();
+    // Calculate the temp board - V1
     for (int x = 0; x < ScreenWidth(); x++) {
         for (int y = 0; y < ScreenHeight(); y++) {
             int neighbors = 0;
@@ -184,17 +177,18 @@ bool game::calculateNewState() {
             }
             if (grid[x][y]) {
                 if (neighbors == 2 || neighbors == 3)
-                    next[x][y] = true;
+                    temp[x][y] = true;
                 else
-                    next[x][y] = false;
+                    temp[x][y] = false;
             } else {
                 if (neighbors == 3)
-                    next[x][y] = true;
+                    temp[x][y] = true;
                 else
-                    next[x][y] = false;
+                    temp[x][y] = false;
             }
         }
     }
+    copyTemp();
     return true;
 }
 
@@ -355,8 +349,8 @@ bool game::parseCommand(const std::string &command) {
     if (cmd == "next" || cmd == "n") {
         calculateNewState();
         updateBoard();
-        overwriteGrid();
-        std::cout << "Calculated the next state" << std::endl;
+        copyTemp();
+        std::cout << "Calculated the temp state" << std::endl;
         return true;
     }
     if (cmd == "help" || cmd == "h") {
@@ -375,7 +369,11 @@ bool game::parseCommand(const std::string &command) {
 void game::fullUpdateBoard() {
     for (int x = 0; x < ScreenWidth(); x++) {
         for (int y = 0; y < ScreenHeight(); y++) {
-            Draw(x, y, next[x][y] ? aliveCellColor : deadCellColor);
+            Draw(x, y, grid[x][y] ? aliveCellColor : deadCellColor);
         }
     }
+}
+
+void game::saveOldState() {
+    std::memcpy(prev, grid, sizeof(grid));
 }

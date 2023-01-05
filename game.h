@@ -12,6 +12,10 @@ class game : public olc::PixelGameEngine {
 public:
     game();
 
+    void setBorders(bool _borders);
+
+    void setClassicMode(bool _classicMode);
+
 private:
     bool OnUserCreate() override;
 
@@ -35,17 +39,16 @@ private:
 
     float getRandomizationChance() const;
 
+    bool addCells();
+
+    bool removeCells();
+
     bool grid[ROWS][COLS]{};
     bool next[ROWS][COLS]{};
     bool paused = false;
     float randomizeChance = 0.5f;
     bool classicMode = true;
-public:
-    void setClassicMode(bool _classicMode);
-
-private:
-
-    bool addCells();
+    bool border = true;
 };
 
 

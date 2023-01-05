@@ -43,6 +43,11 @@ bool game::OnUserUpdate(float fElapsedTime) {
             return addCells();
         }
 
+        // If right mouse clicked
+        if (GetMouse(1).bHeld) {
+            return removeCells();
+        }
+
         if (GetKey(olc::Key::N).bPressed && !classicMode) {
             calculateNewState();
             updateBoard();
@@ -81,6 +86,17 @@ bool game::addCells() {// Get the mouse position
     auto mousePos = GetMousePos();
     // Get the cell position
     next[mousePos.x][mousePos.y] = true;
+    updateBoard();
+    overwriteGrid();
+    // Skip the rest of the loop
+    return true;
+}
+
+
+bool game::removeCells() {
+    auto mousePos = GetMousePos();
+    // Get the cell position
+    next[mousePos.x][mousePos.y] = false;
     updateBoard();
     overwriteGrid();
     // Skip the rest of the loop
@@ -144,14 +160,27 @@ bool game::calculateNewState() {
     for (int x = 0; x < ScreenWidth(); x++) {
         for (int y = 0; y < ScreenHeight(); y++) {
             int neighbors = 0;
-            for (int i = -1; i < 2; i++) {
-                for (int j = -1; j < 2; j++) {
-                    if (i == 0 && j == 0)
-                        continue;
-                    if (x + i < 0 || x + i >= ScreenWidth() || y + j < 0 || y + j >= ScreenHeight())
-                        continue;
-                    if (grid[x + i][y + j])
-                        neighbors++;
+            if (border) {
+                // If border enabled
+                for (int i = -1; i < 2; i++) {
+                    for (int j = -1; j < 2; j++) {
+                        if (i == 0 && j == 0)
+                            continue;
+                        if (x + i < 0 || x + i >= ScreenWidth() || y + j < 0 || y + j >= ScreenHeight())
+                            continue;
+                        if (grid[x + i][y + j])
+                            neighbors++;
+                    }
+                }
+            } else {
+                // If border not enabled
+                for (int i = -1; i < 2; i++) {
+                    for (int j = -1; j < 2; j++) {
+                        if (i == 0 && j == 0)
+                            continue;
+                        if (grid[(x + i + COLS) % COLS][(y + j + ROWS) % ROWS])
+                            neighbors++;
+                    }
                 }
             }
             if (grid[x][y]) {
@@ -205,6 +234,20 @@ bool game::OnConsoleCommand(const std::string &command) {
                 return true;
             }
         }
+        if (var == "border") {
+            std::string border;
+            ss >> border;
+            if (border == "true") {
+                setBorders(true);
+                std::cout << "Borders set to on" << std::endl;
+                return true;
+            }
+            if (border == "false") {
+                setBorders(false);
+                std::cout << "Borders set to off" << std::endl;
+                return true;
+            }
+        }
     }
     if (cmd == "randomize" || cmd == "rand" || cmd == "r") {
         newState();
@@ -246,4 +289,8 @@ float game::getRandomizationChance() const {
 
 void game::setClassicMode(bool _classicMode) {
     game::classicMode = _classicMode;
+}
+
+void game::setBorders(bool _borders) {
+    game::border = _borders;
 }

@@ -6,6 +6,7 @@
 
 game::game() {
     sAppName = "Game Of Life";
+
 }
 
 
@@ -14,7 +15,9 @@ bool game::OnUserCreate() {
 
     // Setup
     ConsoleCaptureStdOut(true);
+    pauseSimulation(true);
     loadConfig("config.cfg");
+    pauseSimulation(true);
     // Rand setup
     rng = std::mt19937(rd());
     dist = std::make_shared<std::uniform_int_distribution<std::mt19937::result_type>>(0, 100);
@@ -55,7 +58,7 @@ bool game::OnUserUpdate(float fElapsedTime) {
     // If space is pressed, pause the simulation
     if (!IsConsoleShowing())
         if (GetKey(olc::Key::SPACE).bPressed)
-            pauseSimulation();
+            pauseSimulation(true);
 
     // Show console
     if (GetKey(olc::Key::TAB).bPressed)
@@ -111,14 +114,16 @@ void game::updateBoard() {
 }
 
 
-void game::pauseSimulation() {
+void game::pauseSimulation(bool mute) {
     paused = !paused;
     if (paused) {
         DrawString(0, 0, "Paused", olc::BLUE, 1);
-        std::cout << "Paused the simulation" << std::endl;
+        if (!mute)
+            std::cout << "Paused the simulation" << std::endl;
     } else {
         Clear(game::deadCellColor); // Is this necessary?
-        std::cout << "Resumed the simulation" << std::endl;
+        if (!mute)
+            std::cout << "Resumed the simulation" << std::endl;
         // Draw the grid
         for (int x = 0; x < ROWS; x++)
             for (int y = 0; y < COLS; y++)
@@ -151,6 +156,7 @@ bool game::calculateNewState() {
     // Calculate the temp board - V1
     for (int x = 0; x < ScreenWidth(); x++) {
         for (int y = 0; y < ScreenHeight(); y++) {
+            // Same code for all algorithms
             int neighbors = 0;
             if (border) {
                 // If border enabled
@@ -175,13 +181,14 @@ bool game::calculateNewState() {
                     }
                 }
             }
+            // Generalized code for all algorithms
             if (grid[x][y]) {
-                if (neighbors == 2 || neighbors == 3)
+                if (survival[neighbors])
                     temp[x][y] = true;
                 else
                     temp[x][y] = false;
             } else {
-                if (neighbors == 3)
+                if (birth[neighbors])
                     temp[x][y] = true;
                 else
                     temp[x][y] = false;
@@ -246,7 +253,7 @@ bool game::parseCommand(const std::string &command) {
             std::cout << "Randomization chance set to " << getRandomizationChance() << std::endl;
             return true;
         }
-        if (var == "mode") {
+        else if (var == "mode") {
             std::string mode;
             ss >> mode;
             if (mode == "classic") {
@@ -260,7 +267,7 @@ bool game::parseCommand(const std::string &command) {
                 return true;
             }
         }
-        if (var == "border") {
+        else if (var == "border") {
             std::string borderState;
             ss >> borderState;
             if (borderState == "true") {
@@ -274,7 +281,7 @@ bool game::parseCommand(const std::string &command) {
                 return true;
             }
         }
-        if (var == "cell") {
+        else if (var == "cell") {
             std::string cellType;
             ss >> cellType;
             bool alive;
@@ -331,6 +338,20 @@ bool game::parseCommand(const std::string &command) {
             fullUpdateBoard();
             return true;
         }
+        else if (var == "algo") {
+            std::string algo;
+            ss >> algo;
+            if (!paused) {
+                std::cout << "Cannot change algorithm while game is running" << std::endl;
+                return false;
+            }
+            auto res = parseAlgo(algo);
+            if (!res) {
+                std::cout << "Invalid algorithm, setting to B3/S23" << std::endl;
+                parseAlgo("B3/S23");
+                return false;
+            }
+        }
     }
     if (cmd == "randomize" || cmd == "rand" || cmd == "r") {
         newState();
@@ -343,7 +364,7 @@ bool game::parseCommand(const std::string &command) {
         return true;
     }
     if (cmd == "pause" || cmd == "p") {
-        pauseSimulation();
+        pauseSimulation(false);
         return true;
     }
     if (cmd == "next" || cmd == "n") {
@@ -376,4 +397,39 @@ void game::fullUpdateBoard() {
 
 void game::saveOldState() {
     std::memcpy(prev, grid, sizeof(grid));
+}
+
+bool game::parseAlgo(const std::string &algorithm) {
+    std::memset(birth, false, sizeof(birth));
+    std::memset(survival, false, sizeof(survival));
+    if (tolower(algorithm[0]) != 'b') {
+        std::cout << "Invalid algorithm" << std::endl;
+        return false;
+    }
+    for (int i = 1; i < algorithm.length(); i++) {
+        if (algorithm[i] == '/') {
+            break;
+        }
+        if (algorithm[i] < '0' || algorithm[i] > '8') {
+            std::cout << "Invalid algorithm" << std::endl;
+            return false;
+        } else {
+            birth[algorithm[i] - '0'] = true;
+        }
+    }
+    for (auto i = algorithm.length() - 1; ; i--) {
+        if (algorithm[i] == '/') {
+            break;
+        }
+        if (algorithm[i] < '0' || algorithm[i] > '8') {
+            if (tolower(algorithm[i]) == 's')
+                continue;
+            std::cout << "Invalid algorithm" << std::endl;
+            return false;
+        } else {
+            survival[algorithm[i] - '0'] = true;
+        }
+    }
+    std::cout << "Algorithm set to " << algorithm << std::endl;
+    return true;
 }

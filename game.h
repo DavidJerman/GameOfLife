@@ -30,7 +30,7 @@ private:
 
     void clearState();
 
-    void pauseSimulation();
+    void pauseSimulation(bool mute);
 
     void updateBoard();
 
@@ -68,6 +68,12 @@ private:
     // Colors
     olc::Pixel deadCellColor = olc::BLACK;
     olc::Pixel aliveCellColor = olc::WHITE;
+
+    // Algorithm
+    bool parseAlgo(const std::string& algorithm);
+
+    bool birth[9]{};
+    bool survival[9]{};
 };
 
 

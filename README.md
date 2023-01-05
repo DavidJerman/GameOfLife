@@ -17,15 +17,15 @@ You can pause the simulation by pressing Space. You can show/hide the console by
 You can also press h or help to show the help in the console.
 
 ### Commands
-| Command | Description                               | Aliases |
-|------|-------------------------------------------|---------|
-| help | Show help                                 | h       |
-| clear | Clear the grid                            | c       |
-| randomize | Randomize the grid                        | r, rand |
-| next | Go to the next generation                 | n       |
-| pause | Pause the simulation                      | p       |
-| set mode <mode> | Set the mode to either classic or stepped |         |
-| set rand <value> | Set the randomization value (1-100)       |         |
+| Command           | Description                               | Aliases |
+|-------------------|-------------------------------------------|---------|
+| help              | Show help                                 | h       |
+| clear             | Clear the grid                            | c       |
+| randomize         | Randomize the grid                        | r, rand |
+| next              | Go to the next generation                 | n       |
+| pause             | Pause the simulation                      | p       |
+| set mode <mode>   | Set the mode to either classic or stepped |         |
+| set rand <value>  | Set the randomization value (1-100)       |         |
 | set border <bool> | Set the border to either true or false    |         |
 
 

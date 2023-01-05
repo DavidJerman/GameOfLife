@@ -41,6 +41,11 @@ g++ -o GameOfLife main.cpp game.cpp -lX11 -lGL -lpthread -lpng -lstdc++fs -std=c
 ```
 If you need more information on how to build the project, you can check out the [olcPixelGameEngine header file](https://github.com/OneLoneCoder/olcPixelGameEngine/blob/master/olcPixelGameEngine.h), which has a section on building the project.
 
+### Windows
+To build in windows, I recommend using CLion, which has a built-in CMake support.
+Otherwise, you can use the provided CMakeLists.txt file to build the project with CMake.
+For more information on how to build the project, you can check out the [olcPixelGameEngine header file](https://github.com/OneLoneCoder/olcPixelGameEngine/blob/master/olcPixelGameEngine.h), which has a section on building the project.
+
 ### Gif
 ![Game of Life](https://davidblog.si/wp-content/uploads/2023/01/Peek-2023-01-04-16-26.gif)
 

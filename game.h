@@ -5,6 +5,7 @@
 #ifndef GAMEOFLIFE_GAME_H
 #define GAMEOFLIFE_GAME_H
 
+#include <random>
 #include "constants.h"
 #include "olcPixelGameEngine.h"
 
@@ -53,6 +54,11 @@ private:
     float randomizeChance = 0.5f;
     bool classicMode = true;
     bool border = true;
+
+    // Rand
+    std::random_device rd;
+    std::mt19937 rng;
+    std::shared_ptr<std::uniform_int_distribution<std::mt19937::result_type>> dist;
 };
 
 

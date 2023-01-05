@@ -15,7 +15,9 @@ bool game::OnUserCreate() {
     // Setup
     ConsoleCaptureStdOut(true);
     loadConfig("config.cfg");
-
+    // Rand setup
+    rng = std::mt19937(rd());
+    dist = std::make_shared<std::uniform_int_distribution<std::mt19937::result_type>>(0, 100);
     // Seed the grid with random values
     newState();
 
@@ -147,7 +149,7 @@ void game::newState() {
     clearState();
     for (auto &row: grid)
         for (auto &cell: row)
-            if (rand() % 100 < randomizeChance * 100)
+            if (dist->operator()(rng) < (unsigned long)(randomizeChance * 100))
                 cell = true;
 }
 

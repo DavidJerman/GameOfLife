@@ -78,6 +78,7 @@ bool game::OnUserUpdate(float fElapsedTime) {
     return true;
 }
 
+
 bool game::addCells() {// Get the mouse position
     auto mousePos = GetMousePos();
     // Get the cell position
@@ -264,14 +265,14 @@ bool game::parseCommand(const std::string &command) {
             }
         }
         if (var == "border") {
-            std::string border;
-            ss >> border;
-            if (border == "true") {
+            std::string borderState;
+            ss >> borderState;
+            if (borderState == "true") {
                 setBorders(true);
                 std::cout << "Borders set to on" << std::endl;
                 return true;
             }
-            if (border == "false") {
+            if (borderState == "false") {
                 setBorders(false);
                 std::cout << "Borders set to off" << std::endl;
                 return true;

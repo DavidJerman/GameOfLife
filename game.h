@@ -43,6 +43,10 @@ private:
 
     bool removeCells();
 
+    void loadConfig(const std::string& configPath);
+
+    bool parseCommand(const std::string &command);
+
     bool grid[ROWS][COLS]{};
     bool next[ROWS][COLS]{};
     bool paused = false;

@@ -6,23 +6,19 @@
 
 game::game() {
     sAppName = "Game Of Life";
-    for (auto &row: grid)
-        for (auto &cell: row)
-            cell = false;
-    for (auto &row: next)
-        for (auto &cell: row)
-            cell = false;
 }
 
 
 bool game::OnUserCreate() {
     // Called once at the start, so create things here
-    // Seed the grid with random values
-    for (auto &row: grid)
-        for (auto &cell: row)
-            if (rand() % 100 < randomizeChance * 100)
-                cell = true;
+
+    // Setup
     ConsoleCaptureStdOut(true);
+    loadConfig("config.cfg");
+
+    // Seed the grid with random values
+    newState();
+
     return true;
 }
 
@@ -207,6 +203,39 @@ void game::setRandomizationChance(float chance) {
 }
 
 bool game::OnConsoleCommand(const std::string &command) {
+    return parseCommand(command);
+}
+
+float game::getRandomizationChance() const {
+    return randomizeChance;
+}
+
+void game::setClassicMode(bool _classicMode) {
+    game::classicMode = _classicMode;
+}
+
+void game::setBorders(bool _borders) {
+    game::border = _borders;
+}
+
+void game::loadConfig(const std::string& configPath) {
+    std::fstream file(configPath);
+    if (!file.is_open()) {
+        std::cout << "Failed to open config file" << std::endl;
+        return;
+    }
+    std::string line;
+    while (std::getline(file, line)) {
+        if (line.empty())
+            continue;
+        if (line[0] == '#')
+            continue;
+        parseCommand(line);
+    }
+    std::cout << "Loaded config file" << std::endl;
+}
+
+bool game::parseCommand(const std::string &command) {
     std::stringstream ss(command);
     std::string cmd;
     ss >> cmd;
@@ -281,16 +310,4 @@ bool game::OnConsoleCommand(const std::string &command) {
         return true;
     }
     return false;
-}
-
-float game::getRandomizationChance() const {
-    return randomizeChance;
-}
-
-void game::setClassicMode(bool _classicMode) {
-    game::classicMode = _classicMode;
-}
-
-void game::setBorders(bool _borders) {
-    game::border = _borders;
 }

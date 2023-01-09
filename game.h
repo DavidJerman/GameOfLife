@@ -55,11 +55,11 @@ private:
     bool setGameSpeed(unsigned int speed);
 
     // I/O
-    void loadConfig(const std::string& configPath);
+    void loadConfig(const std::string &configPath);
 
-    void saveState(const std::string& path);
+    void saveState(const std::string &path);
 
-    void loadState(const std::string& path);
+    void loadState(const std::string &path);
 
     // Drawing
     void clearState();
@@ -92,7 +92,7 @@ private:
     olc::Pixel aliveCellColor = olc::WHITE;
 
     // Algorithm
-    bool parseAlgo(const std::string& algorithm);
+    bool parseAlgo(const std::string &algorithm);
 
     bool birth[9]{};
     bool survival[9]{};

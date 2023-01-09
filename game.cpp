@@ -30,7 +30,7 @@ bool game::OnUserCreate() {
     // Seed the grid with random values
     newState();
     // Game speed
-    gameSpeed = (int)(gameSpeedsMs.size() - 1);
+    gameSpeed = (int) (gameSpeedsMs.size() - 1);
 
     return true;
 }
@@ -352,29 +352,24 @@ bool game::parseCommand(const std::string &command) {
             std::cout << "Invalid variable" << std::endl;
             return false;
         }
-    }
-    else if (cmd == "randomize" || cmd == "rand" || cmd == "r") {
+    } else if (cmd == "randomize" || cmd == "rand" || cmd == "r") {
         newState();
         std::cout << "Randomized the grid" << std::endl;
         return true;
-    }
-    else if (cmd == "clear" || cmd == "c") {
+    } else if (cmd == "clear" || cmd == "c") {
         clearState();
         std::cout << "Cleared the grid" << std::endl;
         return true;
-    }
-    else if (cmd == "pause" || cmd == "p") {
+    } else if (cmd == "pause" || cmd == "p") {
         pauseSimulation(false);
         return true;
-    }
-    else if (cmd == "next" || cmd == "n") {
+    } else if (cmd == "next" || cmd == "n") {
         calculateNewState();
         updateBoard();
         copyTemp();
         std::cout << "Calculated the temp state" << std::endl;
         return true;
-    }
-    else if (cmd == "save" || cmd == "s") {
+    } else if (cmd == "save" || cmd == "s") {
         std::string path;
         ss >> path;
         if (!paused) {
@@ -384,8 +379,7 @@ bool game::parseCommand(const std::string &command) {
         saveState(path);
         std::cout << "Saved the state to " << path << std::endl;
         return true;
-    }
-    else if (cmd == "load" || cmd == "l") {
+    } else if (cmd == "load" || cmd == "l") {
         std::string path;
         ss >> path;
         if (!paused) {
@@ -395,8 +389,7 @@ bool game::parseCommand(const std::string &command) {
         loadState(path);
         std::cout << "Loaded the state from " << path << std::endl;
         return true;
-    }
-    else if (cmd == "help" || cmd == "h") {
+    } else if (cmd == "help" || cmd == "h") {
         std::cout << "Available commands:" << std::endl;
         std::cout << "set rand <chance>              > Sets the randomization chance (0-100)" << std::endl;
         std::cout << "randomize | rand | r           > Randomizes the grid" << std::endl;
@@ -405,8 +398,7 @@ bool game::parseCommand(const std::string &command) {
         std::cout << "next | n                       > Next step/generation" << std::endl;
         std::cout << "help | h                       > Shows this help message" << std::endl;
         return true;
-    }
-    else {
+    } else {
         std::cout << "Invalid command" << std::endl;
         return false;
     }
@@ -439,7 +431,7 @@ void game::setRandomizationChance(float chance) {
 bool game::setGameSpeed(unsigned int speed) {
     if (speed > 9)
         return false;
-    game::gameSpeed = (int)speed;
+    game::gameSpeed = (int) speed;
     return true;
 }
 

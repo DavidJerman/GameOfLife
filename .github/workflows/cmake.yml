@@ -37,7 +37,7 @@ jobs:
     - name: Copy successful build
       uses: actions/upload-artifact@v3
       with:
-        name: builds
+        name: GameOfLifeLinux
         path:
           ${{github.workspace}}/build
 

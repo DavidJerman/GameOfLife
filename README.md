@@ -9,6 +9,8 @@ The game controls are:
 - Left Click: Add a living cell
 - Right Click: Remove a living cell
 - Tab: Show/Hide Console (help or. h for help)
+- F: Make game faster **
+- S: Make game slower **
 
 The game allows you to set the mode to either classic (where the simulation runs normally) or to stepped (where you have to press N to go to the temp generation). 
 You can add cells to the grid by clicking on them. Right click will remove the cells.
@@ -16,23 +18,31 @@ You can also randomize the grid by pressing R or. You can clear the grid by pres
 You can pause the simulation by pressing Space. You can show/hide the console by pressing Tab. 
 You can also press h or help to show the help in the console.
 You can also define custom rules for generating the next generation. See the table below for usage. These rules can be set through the console or the config file.
+<br>
+
+** 
+If you decide to change the speed, the game FPS will drop and the input will become way less
+responsive. The game thread was put to sleep and will ignore any inputs until it wakes up again.
+To account for this, better pause the game or press and hold the buttons for longer to have them detected.
+Input might be changed in the future.
 
 ### Commands
-| Command                         | Description                               | Aliases |
-|---------------------------------|-------------------------------------------|---------|
-| help                            | Show help                                 | h       |
-| clear                           | Clear the grid                            | c       |
-| randomize                       | Randomize the grid                        | r, rand |
-| temp                            | Go to the temp generation                 | n       |
-| pause                           | Pause the simulation                      | p       |
-| next                            | Go to the next generation                 | n       |
-| set mode \<mode>                | Set the mode to either classic or stepped |         |
-| set rand \<value>               | Set the randomization value (1-100)       |         |
-| set border \<bool>              | Set the border to either true or false    |         |
-| set cell \<alive/dead> \<color> | Set the color of the cell                 |         |
-| set algo \<algorithm>           | Set the algorithm to use                  |         |
-| save \<filename>                | Save the current state                    | s       |
-| load \<filename>                | Load a state                              | l       |
+| Command                         | Description                                                                 | Aliases |
+|---------------------------------|-----------------------------------------------------------------------------|---------|
+| help                            | Show help                                                                   | h       |
+| clear                           | Clear the grid                                                              | c       |
+| randomize                       | Randomize the grid                                                          | r, rand |
+| temp                            | Go to the temp generation                                                   | n       |
+| pause                           | Pause the simulation                                                        | p       |
+| next                            | Go to the next generation                                                   | n       |
+| set mode \<mode>                | Set the mode to either classic or stepped                                   |         |
+| set rand \<value>               | Set the randomization value (1-100)                                         |         |
+| set border \<bool>              | Set the border to either true or false                                      |         |
+| set cell \<alive/dead> \<color> | Set the color of the cell                                                   |         |
+| set algo \<algorithm>           | Set the algorithm to use                                                    |         |
+| set speed \<speed>              | Set the speed of the simulation (0-9) 0 is slowest, 9 is fastest (realtime) |         |
+| save \<filename>                | Save the current state                                                      | s       |
+| load \<filename>                | Load a state                                                                | l       |
 
 #### Algorithms
 Custom algorithms follow the following format:
@@ -74,5 +84,5 @@ For more information on how to build the project, you can check out the [olcPixe
 - [x] Add color customization
 - [x] Make it so that individual steps can be taken instead of only pausing/resuming the game
 - [x] Add different algorithms for calculating the next generation
-- [ ] Add a way to change the speed of the simulation
+- [x] Add a way to change the speed of the simulation
 - [ ] Save/load the game state

@@ -6,6 +6,7 @@
 #define GAMEOFLIFE_GAME_H
 
 #include <random>
+#include <vector>
 #include "constants.h"
 #include "olcPixelGameEngine.h"
 
@@ -25,6 +26,10 @@ private:
     bool addCells();
 
     bool calculateNewState();
+
+    void decreaseGameSpeed();
+
+    void increaseGameSpeed();
 
     void newState();
 
@@ -46,6 +51,8 @@ private:
     void setClassicMode(bool _classicMode);
 
     void setRandomizationChance(float chance);
+
+    bool setGameSpeed(unsigned int speed);
 
     // I/O
     void loadConfig(const std::string& configPath);
@@ -72,6 +79,8 @@ private:
     float randomizeChance = 0.5f;
     bool classicMode = true;
     bool border = true;
+    std::vector<unsigned int> gameSpeedsMs = {1000, 500, 250, 100, 50, 25, 10, 5, 1, 0};
+    int gameSpeed = 0;
 
     // Rand
     std::random_device rd;

@@ -37,10 +37,9 @@ jobs:
     - name: Copy successful build
       uses: actions/upload-artifact@v3
       with:
-        name: dist-exclue-markdown
+        name: builds
         path:
-          dist
-          !dist/**/*.md
+          ${{github.workspace}}/build
 
     - name: Test
       working-directory: ${{github.workspace}}/build

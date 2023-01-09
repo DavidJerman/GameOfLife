@@ -39,7 +39,7 @@ jobs:
       with:
         name: GameOfLifeLinux
         path:
-          ${{github.workspace}}/build
+          ${{github.workspace}}/build/GameOfLife
 
     - name: Test
       working-directory: ${{github.workspace}}/build

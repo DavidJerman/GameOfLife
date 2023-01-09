@@ -32,6 +32,15 @@ jobs:
     - name: Build
       # Build your program with the given configuration
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      
+      # Copy the successful build
+    - name: Copy successful build
+      uses: actions/upload-artifact@v3
+      with:
+        name: dist-exclue-markdown
+        path:
+          dist
+          !dist/**/*.md
 
     - name: Test
       working-directory: ${{github.workspace}}/build

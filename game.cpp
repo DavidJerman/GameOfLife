@@ -482,14 +482,14 @@ void game::saveState(const std::string &path) {
     file << (border ? '1' : '0') << std::endl;
     file << gameSpeed << std::endl;
     file << deadCellColor.r << " " << deadCellColor.g << " " << deadCellColor.b << " " << deadCellColor.a << std::endl;
-    file << livingCellColor.r << " " << livingCellColor.g << " " << livingCellColor.b << " " << livingCellColor.a << std::endl;
-    for (bool i : birth)
+    file << livingCellColor.r << " " << livingCellColor.g << " " << livingCellColor.b << " " << livingCellColor.a
+         << std::endl;
+    for (bool i: birth)
         file << (i ? '1' : '0');
     file << std::endl;
-    for (bool i : survival)
+    for (bool i: survival)
         file << (i ? '1' : '0');
     file << std::endl;
-    // TODO: Store state variables
     ioMutex.unlock();
 }
 

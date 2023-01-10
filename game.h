@@ -7,6 +7,7 @@
 
 #include <random>
 #include <vector>
+#include <mutex>
 #include "constants.h"
 #include "olcPixelGameEngine.h"
 
@@ -69,7 +70,7 @@ private:
     void updateBoard();
 
     // I/O
-    bool ioWorking = false;
+    std::mutex ioMutex;
 
     // Game state
     bool grid[ROWS][COLS]{};

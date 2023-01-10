@@ -88,7 +88,8 @@ bool game::OnUserUpdate(float fElapsedTime) {
         return true;
 
     // Sleep for gameSpeed time
-    std::this_thread::sleep_for(std::chrono::milliseconds(gameSpeedsMs[gameSpeed]));
+    if (classicMode)
+        std::this_thread::sleep_for(std::chrono::milliseconds(gameSpeedsMs[gameSpeed]));
 
     // Tick
     if (classicMode)
@@ -341,11 +342,11 @@ bool game::parseCommand(const std::string &command) {
         } else if (var == "speed") {
             int speed;
             ss >> speed;
-            if (speed < 0 || speed > 9) {
-                std::cout << "Invalid speed" << std::endl;
+            auto res = setGameSpeed(speed);
+            if (!res) {
+                std::cout << "Invalid speed, not changing speed!" << std::endl;
                 return false;
             }
-            gameSpeed = speed;
             std::cout << "Game speed set to " << gameSpeedsMs[gameSpeed] << "ms" << std::endl;
             return true;
         } else {

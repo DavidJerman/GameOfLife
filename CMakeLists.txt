@@ -21,7 +21,7 @@ set(LINKER_LIBRARIES_WINDOWS
         gdiplus
         Shlwapi
         dwmapi
-        stdc++fs)
+        )
 
 # Set linker libraries for Linux
 set(LINKER_LIBRARIES_LINUX

@@ -463,7 +463,8 @@ void game::saveState(const std::string &path) {
         std::cout << "Failed to open file" << std::endl;
         return;
     }
-    ioWorking = true; // TODO: Use mutexes
+    // Lock mutex
+    ioMutex.lock();
     for (int y = 0; y < ScreenHeight(); y++) {
         for (int x = 0; x < ScreenWidth(); x++) {
             file << (grid[x][y] ? '1' : '0');
@@ -477,7 +478,7 @@ void game::saveState(const std::string &path) {
         file << std::endl;
     }
     // TODO: Store state variables
-    ioWorking = false;
+    ioMutex.unlock();
 }
 
 
@@ -487,7 +488,7 @@ void game::loadState(const std::string &path) {
         std::cout << "Failed to open file" << std::endl;
         return;
     }
-    ioWorking = true;
+    ioMutex.lock();
     std::string line;
     int y = 0;
     while (std::getline(file, line)) {
@@ -501,7 +502,7 @@ void game::loadState(const std::string &path) {
             break;
         }
     }
-    ioWorking = false;
+    ioMutex.unlock();
 }
 
 

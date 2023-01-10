@@ -90,7 +90,7 @@ private:
 
     // Colors
     olc::Pixel deadCellColor = olc::BLACK;
-    olc::Pixel aliveCellColor = olc::WHITE;
+    olc::Pixel livingCellColor = olc::WHITE;
 
     // Algorithm
     bool parseAlgo(const std::string &algorithm);

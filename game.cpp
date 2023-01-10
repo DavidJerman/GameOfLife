@@ -203,7 +203,7 @@ void game::pauseSimulation(bool mute) {
         for (int x = 0; x < ROWS; x++)
             for (int y = 0; y < COLS; y++)
                 if (grid[x][y])
-                    Draw(x, y, grid[x][y] ? aliveCellColor : deadCellColor);
+                    Draw(x, y, grid[x][y] ? livingCellColor : deadCellColor);
     }
 }
 
@@ -286,37 +286,37 @@ bool game::parseCommand(const std::string &command) {
             ss >> color;
             if (color == "red") {
                 if (alive)
-                    aliveCellColor = olc::RED;
+                    livingCellColor = olc::RED;
                 else
                     deadCellColor = olc::RED;
                 std::cout << "Cell color set to red" << std::endl;
             } else if (color == "green") {
                 if (alive)
-                    aliveCellColor = olc::GREEN;
+                    livingCellColor = olc::GREEN;
                 else
                     deadCellColor = olc::GREEN;
                 std::cout << "Cell color set to green" << std::endl;
             } else if (color == "blue") {
                 if (alive)
-                    aliveCellColor = olc::BLUE;
+                    livingCellColor = olc::BLUE;
                 else
                     deadCellColor = olc::BLUE;
                 std::cout << "Cell color set to blue" << std::endl;
             } else if (color == "yellow") {
                 if (alive)
-                    aliveCellColor = olc::YELLOW;
+                    livingCellColor = olc::YELLOW;
                 else
                     deadCellColor = olc::YELLOW;
                 std::cout << "Cell color set to yellow" << std::endl;
             } else if (color == "white") {
                 if (alive)
-                    aliveCellColor = olc::WHITE;
+                    livingCellColor = olc::WHITE;
                 else
                     deadCellColor = olc::WHITE;
                 std::cout << "Cell color set to white" << std::endl;
             } else if (color == "black") {
                 if (alive)
-                    aliveCellColor = olc::BLACK;
+                    livingCellColor = olc::BLACK;
                 else
                     deadCellColor = olc::BLACK;
                 std::cout << "Cell color set to black" << std::endl;
@@ -477,6 +477,18 @@ void game::saveState(const std::string &path) {
         }
         file << std::endl;
     }
+    file << randomizeChance << std::endl;
+    file << (classicMode ? '1' : '0') << std::endl;
+    file << (border ? '1' : '0') << std::endl;
+    file << gameSpeed << std::endl;
+    file << deadCellColor.r << " " << deadCellColor.g << " " << deadCellColor.b << " " << deadCellColor.a << std::endl;
+    file << livingCellColor.r << " " << livingCellColor.g << " " << livingCellColor.b << " " << livingCellColor.a << std::endl;
+    for (bool i : birth)
+        file << (i ? '1' : '0');
+    file << std::endl;
+    for (bool i : survival)
+        file << (i ? '1' : '0');
+    file << std::endl;
     // TODO: Store state variables
     ioMutex.unlock();
 }
@@ -502,6 +514,36 @@ void game::loadState(const std::string &path) {
             break;
         }
     }
+    // Randomization chance
+    std::getline(file, line);
+    randomizeChance = std::stof(line);
+    // Classic mode
+    std::getline(file, line);
+    classicMode = line[0] == '1';
+    // Border
+    std::getline(file, line);
+    border = line[0] == '1';
+    // Game speed
+    std::getline(file, line);
+    gameSpeed = std::stoi(line);
+    // Colors
+    std::stringstream ss;
+    std::getline(file, line);
+    ss << line;
+    ss >> deadCellColor.r >> deadCellColor.g >> deadCellColor.b >> deadCellColor.a;
+    ss.clear();
+    std::getline(file, line);
+    ss << line;
+    ss >> livingCellColor.r >> livingCellColor.g >> livingCellColor.b >> livingCellColor.a;
+    // Birth rule
+    std::getline(file, line);
+    for (int i = 0; i < 9; i++) {
+        birth[i] = line[i] == '1';
+    }
+    std::getline(file, line);
+    for (int i = 0; i < 9; i++) {
+        survival[i] = line[i] == '1';
+    }
     ioMutex.unlock();
 }
 
@@ -520,7 +562,7 @@ void game::clearState() {
 void game::fullUpdateBoard() {
     for (int x = 0; x < ScreenWidth(); x++) {
         for (int y = 0; y < ScreenHeight(); y++) {
-            Draw(x, y, grid[x][y] ? aliveCellColor : deadCellColor);
+            Draw(x, y, grid[x][y] ? livingCellColor : deadCellColor);
         }
     }
 }
@@ -530,7 +572,7 @@ void game::updateBoard() {
     for (int x = 0; x < ScreenWidth(); x++)
         for (int y = 0; y < ScreenHeight(); y++)
             if (prev[x][y] != grid[x][y])
-                Draw(x, y, grid[x][y] ? aliveCellColor : deadCellColor);
+                Draw(x, y, grid[x][y] ? livingCellColor : deadCellColor);
 }
 
 

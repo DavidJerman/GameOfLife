@@ -71,7 +71,7 @@ jobs:
       with:
         name: GameOfLifeWindows
         path:
-          ${{github.workspace}}/build/GameOfLife.exe
+          ${{github.workspace}}/build/Release/GameOfLife.exe
 
     - name: Test
       working-directory: ${{github.workspace}}/build
